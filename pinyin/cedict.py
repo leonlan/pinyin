@@ -24,6 +24,8 @@ import string
 
 import collections
 
+from decode_pinyin import decode_pinyin as d
+
 
 def Tree():
     return collections.defaultdict(Tree)
@@ -33,7 +35,7 @@ dictionaries = None  # Used for single word lookup
 trees = None  # Used for parsing.
 
 
-def _add_to_tree(tree, word, meaning):
+def _add_to_tree(tree, word, meaning, pinyin):
     '''
     We build word search trees, where we walk down
     the letters of a word. For example:
@@ -47,9 +49,9 @@ def _add_to_tree(tree, word, meaning):
            Hello
     '''
     if len(word) == 0:
-        tree[''] = meaning
+        tree[''] = (meaning, pinyin)
     else:
-        _add_to_tree(tree[word[0]], word[1:], meaning)
+        _add_to_tree(tree[word[0]], word[1:], meaning, pinyin)
 
 
 def init():
@@ -81,11 +83,12 @@ def init():
                     if line[0] != '#')
 
     for traditional, simplified, pinyin, meaning in parsed_lines:
+        pinyin = d(pinyin)
         meaning = meaning.split('/')
-        dictionaries['traditional'][traditional] = meaning
-        dictionaries['simplified'][simplified] = meaning
-        _add_to_tree(trees['traditional'], traditional, meaning)
-        _add_to_tree(trees['simplified'], simplified, meaning)
+        dictionaries['traditional'][traditional] = (meaning, pinyin)
+        dictionaries['simplified'][simplified] = (meaning, pinyin)
+        _add_to_tree(trees['traditional'], traditional, meaning, pinyin)
+        _add_to_tree(trees['simplified'], simplified, meaning, pinyin)
 
 
 def translate_word(word, dictionary=['simplified']):
