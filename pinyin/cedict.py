@@ -24,7 +24,7 @@ import string
 
 import collections
 
-from decode_pinyin import decode_pinyin as d
+from .decode_pinyin import decode_pinyin as d
 
 
 def Tree():
