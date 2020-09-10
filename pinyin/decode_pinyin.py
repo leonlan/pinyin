@@ -1,3 +1,5 @@
+import re
+
 PinyinToneMark = {
     0: "aoeiuv\u00fc",
     1: "\u0101\u014d\u0113\u012b\u016b\u01d6\u01d6",
